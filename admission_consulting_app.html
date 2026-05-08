@@ -2292,6 +2292,7 @@ function saveCase() {
   // compute top5 for summary
   const allRes = [];
   ['snu','yonsei','korea','hanyang','skku','sogang'].forEach(uk=>{
+    DB[uk].items.filter(it=>it.ok(_lastS)).forEach(it=>{
       allRes.push({uk,uname:DB[uk].name,nm:it.nm,ty:it.ty,p:it.calc(_lastS)});
     });
   });
@@ -3144,6 +3145,12 @@ function toggleReason(id){
 function rTop5(s){
   const all=[];
   ['snu','yonsei','korea','hanyang','skku','sogang'].forEach(uk=>{
+    const u=DB[uk];
+    u.items.filter(it=>it.ok(s)).forEach(it=>{
+      const p=it.calc(s);
+      all.push({uk,uname:u.name,udot:u.dot,ucolor:u.color,...it,p});
+    });
+  });
   const top5=all.sort((a,b)=>b.p-a.p).slice(0,5);
   const mj=GM[s.mt]||s.mt;
   const rankStyle=['color:#f59e0b','color:#94a3b8','color:#b45309','color:var(--text3)','color:var(--text3)'];
@@ -3168,7 +3175,7 @@ function rTop5(s){
       <div class="rpanel" id="rp-${tid}" style="display:none;margin-top:10px">${panelHTML}</div>
     </div>`;
   }).join('');
-  return`<div class="t5w fi d1"><div class="t5h">🏆 추천 전형 Top 5 <span style="font-weight:400;color:var(--text3);font-size:10px;letter-spacing:0;text-transform:none">— 4개교 전체 합격가능성 순위</span></div>${items}</div>`;
+  return`<div class="t5w fi d1"><div class="t5h">🏆 추천 전형 Top 5 <span style="font-weight:400;color:var(--text3);font-size:10px;letter-spacing:0;text-transform:none">— 6개교 전체 합격가능성 순위</span></div>${items}</div>`;
 }
 
 function rDivider(){return'<div class="sd"></div>';}
