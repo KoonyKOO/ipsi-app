@@ -88,9 +88,11 @@ main{max-width:1160px;margin:26px auto 60px;padding:0 22px;display:grid;grid-tem
 .fl2{border-color:rgba(239,68,68,.3)!important;color:rgba(239,68,68,.9)!important;background:rgba(239,68,68,.07)!important;}
 .cg{display:grid;gap:18px;}
 .cg4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.cg6{grid-template-columns:1fr 1fr 1fr 1fr 1fr 1fr;}
 .cg2{grid-template-columns:1fr 1fr;}
-@media(max-width:1050px){.cg4{grid-template-columns:1fr 1fr;}}
-@media(max-width:650px){.cg4,.cg2{grid-template-columns:1fr;}}
+@media(max-width:1300px){.cg6{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:1050px){.cg4{grid-template-columns:1fr 1fr;}.cg6{grid-template-columns:1fr 1fr;}}
+@media(max-width:650px){.cg4,.cg6,.cg2{grid-template-columns:1fr;}}
 .uh{display:flex;align-items:center;gap:9px;margin-bottom:12px;padding-bottom:9px;border-bottom:1px solid var(--border);}
 .ud{width:9px;height:9px;border-radius:50%;}
 .ut{font-size:14px;font-weight:700;font-family:'Noto Serif KR',serif;}
@@ -2289,8 +2291,7 @@ function saveCase() {
   const name = document.getElementById('caseNameInp')?.value || '무제 케이스';
   // compute top5 for summary
   const allRes = [];
-  ['snu','yonsei','korea','hanyang'].forEach(uk=>{
-    DB[uk].items.filter(it=>it.ok(_lastS)).forEach(it=>{
+  ['snu','yonsei','korea','hanyang','skku','sogang'].forEach(uk=>{
       allRes.push({uk,uname:DB[uk].name,nm:it.nm,ty:it.ty,p:it.calc(_lastS)});
     });
   });
@@ -2326,8 +2327,8 @@ function rSin(uk,s) {
 }
 
 function rCmp(s) {
-  const cols=['snu','yonsei','korea','hanyang'].map(uk=>{const u=DB[uk],res=comp(uk,s);return`<div><div class="uh"><div class="ud" style="background:${u.dot}"></div><div class="ut">${u.name}</div></div>${rCards(res,u.color,true,s)}</div>`;}).join('');
-  return`<div class="panel"><div class="ph"><span>⚖️</span><span class="pt">4개교 동시 비교</span></div><div class="pb">${rSum(s)}${iN(s.mt)?rSbj(s):''}${rTop5(s)}<div class="cn2">💡 동일 조건으로 서울대·연세대·고려대·한양대를 동시에 비교합니다.</div><div class="cg cg4">${cols}</div></div></div>`;
+  const cols=['snu','yonsei','korea','hanyang','skku','sogang'].map(uk=>{const u=DB[uk],res=comp(uk,s);return`<div><div class="uh"><div class="ud" style="background:${u.dot}"></div><div class="ut">${u.name}</div></div>${rCards(res,u.color,true,s)}</div>`;}).join('');
+  return`<div class="panel"><div class="ph"><span>⚖️</span><span class="pt">6개교 동시 비교</span></div><div class="pb">${rSum(s)}${iN(s.mt)?rSbj(s):''}${rTop5(s)}<div class="cn2">💡 동일 조건으로 서울대·연세대·고려대·한양대·성균관대·서강대를 동시에 비교합니다.</div><div class="cg cg6">${cols}</div></div></div>`;
 }
 
 
@@ -3142,13 +3143,7 @@ function toggleReason(id){
 
 function rTop5(s){
   const all=[];
-  ['snu','yonsei','korea','hanyang'].forEach(uk=>{
-    const u=DB[uk];
-    u.items.filter(it=>it.ok(s)).forEach(it=>{
-      const p=it.calc(s);
-      all.push({uk,uname:u.name,udot:u.dot,ucolor:u.color,...it,p});
-    });
-  });
+  ['snu','yonsei','korea','hanyang','skku','sogang'].forEach(uk=>{
   const top5=all.sort((a,b)=>b.p-a.p).slice(0,5);
   const mj=GM[s.mt]||s.mt;
   const rankStyle=['color:#f59e0b','color:#94a3b8','color:#b45309','color:var(--text3)','color:var(--text3)'];
@@ -3786,7 +3781,7 @@ function admRender(tab){
 
 // ── 탭0: 입결 DB ──
 function admIPK(){
-  const unis={snu:'서울대학교',yonsei:'연세대학교',korea:'고려대학교',hanyang:'한양대학교'};
+  const unis={snu:'서울대학교',yonsei:'연세대학교',korea:'고려대학교',hanyang:'한양대학교',skku:'성균관대학교',sogang:'서강대학교'};
   let html='<div class="adm-warn">⚠️ 아래 입결은 2024~2025학년도(9등급제) 실적입니다. 2028학년도는 5등급제 전환으로 직접 비교 불가 — 참고 지표로만 활용하세요.</div>';
   for(const[uk,uname] of Object.entries(unis)){
     const d=IPKYUL[uk];
